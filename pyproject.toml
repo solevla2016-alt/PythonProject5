@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "pythonproject5"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.5"
+python-dotenv = "^1.2.1"
+openpyxl = "^3.1.5"
+
+
+[tool.poetry.group.dev.dependencies]
+types-openpyxl = "^3.1.5.20250919"
+pytest = "^9.0.2"
+black = "^26.1.0"
+flake8 = "^7.3.0"
+isort = "^7.0.0"
+mypy = "^1.19.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+max-line-length = 119
+exclude = [
+    ".git/",
+    "__pycache__/",
+    ".venv/"
+]
+
+
+[tool.mypy]
+mypy_path = "src"
+follow_imports = "silent"
+strict_optional = true
+warn_return_any = true
+disallow_untyped_defs = true
+exclude = [
+    "venv/",
+    ".venv/",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py"]
+
+[tool.coverage.run]
+omit = [
+    "src/main.py"
+]
