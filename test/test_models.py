@@ -21,15 +21,16 @@ def reset_category_counters():
 
 def test_product_initialization():
     product = Product("Наушники", "Беспроводные", 4999.99, 15)
-
     assert product.name == "Наушники"
     assert product.description == "Беспроводные"
     assert product.price == 4999.99
     assert product.quantity == 15
 
+
 def test_product_repr():
     product = Product("Test", "Desc", 100.0, 1)
     assert "Test" in repr(product)
+    assert "100.0" in repr(product)
 
 
 def test_category_initialization(sample_products, reset_category_counters):
@@ -37,7 +38,12 @@ def test_category_initialization(sample_products, reset_category_counters):
 
     assert category.name == "Электроника"
     assert category.description == "Техника и гаджеты"
-    assert category.products == sample_products
+    # Проверяем приватный атрибут через геттер
+    assert category.products_list == sample_products
+    # Проверка строкового геттера
+    assert isinstance(category.products, str)
+    assert "Телефон" in category.products
+    assert "Ноутбук" in category.products
 
 
 def test_category_count(sample_products, reset_category_counters):
@@ -47,8 +53,44 @@ def test_category_count(sample_products, reset_category_counters):
     assert Category.category_count == 2
 
 
-def test_product_count(sample_products, reset_category_counters):
-    Category("Электроника", "Техника", sample_products)
-    Category("Одежда", "Мужская одежда", [])
+def test_add_product(sample_products, reset_category_counters):
+    """Проверяем добавление нового продукта и корректность счетчика"""
+    category = Category("Электроника", "Техника", sample_products)
+    new_product = Product("Монитор", "LCD 24\"", 12000.0, 3)
 
-    assert Category.product_count == 2
+    # Сохраняем текущее значение глобального счетчика
+    previous_count = Category.product_count
+
+    # Добавляем продукт через метод add_product
+    category.add_product(new_product)
+
+    # Проверяем, что новый продукт есть в списке товаров через геттер
+    assert new_product in category.products_list
+
+    # Проверяем, что глобальный счетчик увеличился на 1
+    assert Category.product_count == previous_count + 1
+
+
+
+def test_new_product_creates_or_merges():
+    existing = [
+        Product("Телефон", "Смартфон", 20000.0, 5)
+    ]
+    # создаём новый уникальный
+    new_prod = Product.new_product(
+        {"name": "Ноутбук", "description": "Игровой", "price": 50000.0, "quantity": 2},
+        existing
+    )
+    assert new_prod.name == "Ноутбук"
+    assert new_prod.quantity == 2
+    assert new_prod.price == 50000.0
+
+    # создаём дубликат — увеличиваем количество и выбираем max цену
+    merged_prod = Product.new_product(
+        {"name": "Телефон", "description": "Смартфон", "price": 25000.0, "quantity": 3},
+        existing
+    )
+    assert merged_prod is existing[0]
+    assert merged_prod.quantity == 8  # 5+3
+    assert merged_prod.price == 25000.0  # max(20000, 25000)
+
