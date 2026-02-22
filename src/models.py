@@ -5,7 +5,10 @@ class Product:
     """
     Класс для описания товара
     """
-    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+
+    def __init__(
+        self, name: str, description: str, price: float, quantity: int
+    ) -> None:
         self.name = name
         self.description = description
         self._price = price  # приватный атрибут цены
@@ -23,13 +26,17 @@ class Product:
             print("Цена не должна быть нулевая или отрицательная")
             return
         if new_price < self._price:
-            answer = input(f"Вы действительно хотите понизить цену с {self._price} до {new_price}? (y/n): ")
+            answer = input(
+                f"Вы действительно хотите понизить цену с {self._price} до {new_price}? (y/n): "
+            )
             if answer.lower() != "y":
                 return
         self._price = new_price
 
     @classmethod
-    def new_product(cls, data: dict, existing_products: Optional[List["Product"]] = None) -> "Product":
+    def new_product(
+        cls, data: dict, existing_products: Optional[List["Product"]] = None
+    ) -> "Product":
         """
         Создает новый продукт из словаря.
         Если продукт с таким именем уже есть, суммирует количество
@@ -51,45 +58,51 @@ class Product:
         return cls(name, description, price, quantity)
 
     def __repr__(self) -> str:
-        return f"Product(name={self.name}, price={self._price}, quantity={self.quantity})"
+        return (
+            f"Product(name={self.name}, price={self._price}, quantity={self.quantity})"
+        )
 
 
 class Category:
     """
     Класс для описания категории товаров
     """
+
     category_count: int = 0
     product_count: int = 0
 
-    def __init__(self, name: str, description: str, products: Optional[List[Product]] = None) -> None:
+    def __init__(
+        self, name: str, description: str, products: Optional[List[Product]] = None
+    ) -> None:
         self.name = name
         self.description = description
-        self._products: List[Product] = products or []
+        self.__products: List[Product] = products or []
 
         Category.category_count += 1
-        Category.product_count += len(self._products)
+        Category.product_count += len(self.__products)
 
     def add_product(self, product: Product) -> None:
         """
         Добавляет продукт в категорию
         """
-        self._products.append(product)
+        self.__products.append(product)
         Category.product_count += 1
-
-    @property
-    def products_list(self) -> List[Product]:
-        """
-        Возвращает список объектов Product
-        """
-        return self._products
 
     @property
     def products(self) -> str:
         """
-        Геттер для совместимости с main.py
-        Возвращает строковое представление всех товаров категории
+        Геттер для приватного атрибута products.
+        Возвращает строку строго по шаблону:
+        "Название продукта, X руб. Остаток: X шт.\n"
         """
-        return "\n".join(
-            f"{prod.name}, {prod.price} руб. Остаток: {prod.quantity} шт."
-            for prod in self._products
+        return "".join(
+            f"{prod.name}, {prod.price} руб. Остаток: {prod.quantity} шт.\n"
+            for prod in self.__products
         )
+
+    @property
+    def products_list(self) -> List[Product]:
+        """
+        Возвращает список объектов Product (если нужен доступ к объектам)
+        """
+        return self.__products
