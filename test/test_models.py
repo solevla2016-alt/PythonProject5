@@ -94,3 +94,8 @@ def test_new_product_creates_or_merges():
     assert merged_prod.quantity == 8  # 5+3
     assert merged_prod.price == 25000.0  # max(20000, 25000)
 
+def test_price_setter_validation():
+    product = Product("Test", "Desc", 100.0, 1)
+    product.price = -10
+    assert product.price == 100.0
+

@@ -11,13 +11,13 @@ class Product:
     ) -> None:
         self.name = name
         self.description = description
-        self._price = price  # приватный атрибут цены
+        self.__price = price  # полностью приватный атрибут
         self.quantity = quantity
 
     @property
     def price(self) -> float:
         """Геттер для цены"""
-        return self._price
+        return self.__price
 
     @price.setter
     def price(self, new_price: float) -> None:
@@ -25,23 +25,20 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
-        if new_price < self._price:
+
+        if new_price < self.__price:
             answer = input(
-                f"Вы действительно хотите понизить цену с {self._price} до {new_price}? (y/n): "
+                f"Вы действительно хотите понизить цену с {self.__price} до {new_price}? (y/n): "
             )
             if answer.lower() != "y":
                 return
-        self._price = new_price
+
+        self.__price = new_price
 
     @classmethod
     def new_product(
         cls, data: dict, existing_products: Optional[List["Product"]] = None
     ) -> "Product":
-        """
-        Создает новый продукт из словаря.
-        Если продукт с таким именем уже есть, суммирует количество
-        и выбирает более высокую цену.
-        """
         existing_products = existing_products or []
         name = data.get("name", "")
         description = data.get("description", "")
@@ -59,7 +56,7 @@ class Product:
 
     def __repr__(self) -> str:
         return (
-            f"Product(name={self.name}, price={self._price}, quantity={self.quantity})"
+            f"Product(name={self.name}, price={self.__price}, quantity={self.quantity})"
         )
 
 
