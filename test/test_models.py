@@ -99,3 +99,25 @@ def test_price_setter_validation():
     product.price = -10
     assert product.price == 100.0
 
+
+def test_product_str():
+    product = Product("Телефон", "Смартфон", 19999.99, 10)
+    assert str(product) == "Телефон, 19999.99 руб. Остаток: 10 шт."
+
+def test_category_str(sample_products, reset_category_counters):
+    category = Category("Электроника", "Техника", sample_products)
+
+    # 10 + 5 = 15
+    assert str(category) == "Электроника, количество продуктов: 15 шт."
+
+def test_product_add():
+    p1 = Product("A", "Desc", 100.0, 10)
+    p2 = Product("B", "Desc", 200.0, 2)
+
+    # 100*10 + 200*2 = 1000 + 400 = 1400
+    assert p1 + p2 == 1400
+
+def test_product_add_invalid_type():
+    p = Product("A", "Desc", 100.0, 10)
+    assert p.__add__(5) is NotImplemented
+

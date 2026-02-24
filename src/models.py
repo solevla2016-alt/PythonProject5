@@ -59,6 +59,14 @@ class Product:
             f"Product(name={self.name}, price={self.__price}, quantity={self.quantity})"
         )
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        if not isinstance(other, Product):
+            return NotImplemented
+        return (self.price * self.quantity) + (other.price * other.quantity)
+
 
 class Category:
     """
@@ -103,3 +111,7 @@ class Category:
         Возвращает список объектов Product (если нужен доступ к объектам)
         """
         return self.__products
+
+    def __str__(self) -> str:
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
