@@ -74,5 +74,4 @@ Product.
 о создании объекта продукта.
 
 Цепочка наследования:
-
 BaseProduct → Product → Smartphone / LawnGrass
