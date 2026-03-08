@@ -1,8 +1,34 @@
-from typing import List, Optional
-from typing import Any
+from abc import ABC, abstractmethod
+from typing import Any, List, Optional
 
 
-class Product:
+class InitMixin:
+    """Миксин для вывода информации о создании объекта"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        print(f"{self.__class__.__name__}{args}")
+        super().__init__(*args, **kwargs)
+
+
+class BaseProduct(ABC):
+    """
+    Абстрактный базовый класс продукта
+    """
+
+    @abstractmethod
+    def __init__(
+        self, name: str, description: str, price: float, quantity: int
+    ) -> None:
+        self.name = name
+        self.description = description
+        self.quantity = quantity
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+
+class Product(InitMixin, BaseProduct):
     """
     Класс для описания товара
     """
@@ -10,10 +36,8 @@ class Product:
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
-        self.name = name
-        self.description = description
-        self.__price = price  # полностью приватный атрибут
-        self.quantity = quantity
+        super().__init__(name, description, price, quantity)
+        self.__price = price
 
     @property
     def price(self) -> float:

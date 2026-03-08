@@ -1,5 +1,6 @@
 import pytest
 from src.models import Product, Category, Smartphone, LawnGrass
+from src.models import BaseProduct
 
 
 @pytest.fixture
@@ -185,3 +186,12 @@ def test_add_invalid_object_to_category(reset_category_counters):
 
     with pytest.raises(TypeError):
         category.add_product("not a product")
+
+def test_init_mixin_output(capsys):
+    Product("Test", "Desc", 100.0, 1)
+    captured = capsys.readouterr()
+    assert "Product(" in captured.out
+
+def test_base_product_is_abstract():
+    with pytest.raises(TypeError):
+        BaseProduct("A", "B", 10, 1)
