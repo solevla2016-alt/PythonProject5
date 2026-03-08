@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Optional
 
+from src.exceptions import ZeroQuantityError
+
 
 class InitMixin:
     """Миксин для вывода информации о создании объекта"""
@@ -29,13 +31,14 @@ class BaseProduct(ABC):
 
 
 class Product(InitMixin, BaseProduct):
-    """
-    Класс для описания товара
-    """
+    """Класс для описания товара"""
 
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         super().__init__(name, description, price, quantity)
         self.__price = price
 
@@ -151,17 +154,32 @@ class Category:
     ) -> None:
         self.name = name
         self.description = description
-        self.__products: List[Product] = products or []
+        self.__products: list[Product] = products if products else []
 
         Category.category_count += 1
         Category.product_count += len(self.__products)
 
-    def add_product(self, product: Any) -> None:
+    def add_product(self, product: Product) -> None:
         if not isinstance(product, Product):
             raise TypeError("Можно добавлять только продукты или их наследников")
 
-        self.__products.append(product)
-        Category.product_count += 1
+        try:
+            if product.quantity == 0:
+                raise ZeroQuantityError()
+
+        except ZeroQuantityError as e:
+            print(e)
+
+        else:
+            self.__products.append(product)
+            Category.product_count += 1
+            print("Товар успешно добавлен")
+
+        finally:
+            print("Обработка добавления товара завершена")
+
+    def middle_price(self) -> float:
+        return self.average_price()
 
     @property
     def products(self) -> str:
@@ -185,3 +203,10 @@ class Category:
     def __str__(self) -> str:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def average_price(self) -> float:
+        try:
+            total = sum(product.price for product in self.products_list)
+            return total / len(self.products_list)
+        except ZeroDivisionError:
+            return 0

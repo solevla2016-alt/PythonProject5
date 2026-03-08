@@ -195,3 +195,21 @@ def test_init_mixin_output(capsys):
 def test_base_product_is_abstract():
     with pytest.raises(TypeError):
         BaseProduct("A", "B", 10, 1)
+
+
+def test_product_zero_quantity():
+    with pytest.raises(ValueError):
+        Product("Test", "Desc", 100.0, 0)
+
+def test_average_price():
+    p1 = Product("A", "A", 100.0, 1)
+    p2 = Product("B", "B", 300.0, 1)
+
+    cat = Category("Test", "Test", [p1, p2])
+
+    assert cat.average_price() == 200
+
+def test_average_price_empty_category():
+    cat = Category("Empty", "Empty", [])
+
+    assert cat.average_price() == 0
